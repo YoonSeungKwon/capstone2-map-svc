@@ -13,6 +13,8 @@ public enum ExceptionCode {
 
     //서비스 호출 에러
 
+    LOCK_TIMEOUT_ERROR("요청이 많습니다. 잠시 후 다시 시도해 주세요.", HttpStatus.LOCKED),
+
     INTERNAL_SERVER_ERROR("알 수 없는 에러입니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
 

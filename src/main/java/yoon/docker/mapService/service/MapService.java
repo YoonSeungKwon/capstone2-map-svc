@@ -1,11 +1,13 @@
 package yoon.docker.mapService.service;
 
+import jakarta.persistence.LockTimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionTimedOutException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import yoon.docker.mapService.dto.request.AddedMemberDto;
@@ -18,6 +20,7 @@ import yoon.docker.mapService.entity.Maps;
 import yoon.docker.mapService.entity.Members;
 import yoon.docker.mapService.enums.Category;
 import yoon.docker.mapService.enums.ExceptionCode;
+import yoon.docker.mapService.exception.PessimisticLockTimeOutException;
 import yoon.docker.mapService.exception.UnAuthorizedException;
 import yoon.docker.mapService.repository.MapMemberRepository;
 import yoon.docker.mapService.repository.MapRepository;
@@ -148,12 +151,19 @@ public class MapService {
         Members currentMember = (Members) authentication.getPrincipal();
         Members newMember = memberRepository.findMembersByMemberIdx(dto.getIdx());
         Maps currentMap = mapRepository.findMapsByMapIdx(mapIdx);
+
         if(newMember == null)
             throw new UsernameNotFoundException(String.valueOf(dto.getIdx()));  //초대하는 유저가 존재하지 않음
         if(currentMap == null)
             throw new RuntimeException();   //MapException 지도가 존재하지 않음
-        if(!mapMemberRepository.existsByMapsAndMembers(currentMap, currentMember))
-            throw new RuntimeException();       //UnAuthException  유저가 지도의 회원이 아님
+
+        try {       //Lock Pessimistic.Write  해당 유저가 회원인지 확인(중복 가입 방지)
+            if (!mapMemberRepository.existsByMapsAndMembers(currentMap, currentMember))
+                throw new RuntimeException();      //UnAuthException  유저가 지도의 회원이 아님
+        }catch (LockTimeoutException | TransactionTimedOutException e) {
+            throw new PessimisticLockTimeOutException(ExceptionCode.LOCK_TIMEOUT_ERROR.getMessage(),
+                    ExceptionCode.LOCK_TIMEOUT_ERROR.getStatus()); //Lock 에외
+        }
 
         MapMembers mm = MapMembers.builder()
                 .maps(currentMap)
@@ -161,9 +171,9 @@ public class MapService {
                 .build();
         if(mapMemberRepository.existsByMapsAndMembers(currentMap, newMember))
             throw new RuntimeException();       //MapException 해당 유저가 이미 회원
+
         return toResponse(mapMemberRepository.save(mm));
     }
-
     //지도 이름 바꾸기
     @Transactional
     public MapResponse changeMapTitle(long mapIdx, MapDto dto){
