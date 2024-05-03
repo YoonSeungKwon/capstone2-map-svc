@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import yoon.docker.mapService.enums.Category;
 
 import java.time.LocalDateTime;
 
@@ -15,29 +14,23 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "maps")
-public class Maps {
+@Table(name = "privateMap")
+public class PrivateMap {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long mapIdx;
+    private long privateMapIdx;
 
-    @ManyToOne
-    @JoinColumn(name = "map_member")
-    private MapMembers mapMembers;
-
-    @Column
-    private String title;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_privateMap")
+    private Members members;
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @Builder
-    public Maps(String title){
-        this.title = title;
+    public PrivateMap(Members members){
+        this.members = members;
     }
 
 }

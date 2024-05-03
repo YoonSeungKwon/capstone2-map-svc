@@ -3,6 +3,7 @@ package yoon.docker.mapService.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import yoon.docker.mapService.dto.request.MapDto;
 import yoon.docker.mapService.dto.response.MapMemberResponse;
@@ -19,6 +20,7 @@ import java.util.List;
 public class MapController {
 
     private final MapService mapService;
+
 
     //지도 불러오기
     @GetMapping()
@@ -40,17 +42,25 @@ public class MapController {
 
     //지도 만들기
     @PostMapping()
-    public ResponseEntity<MapResponse> postMap(@RequestBody MapDto dto){
+    public ResponseEntity<MapResponse> postMap(@RequestBody @Validated MapDto dto){
 
         MapResponse result = mapService.createNewMap(dto);
 
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
+    //개인 지도 만들기(유저당 하나 회원가입시 생성)
+    @PostMapping("/{memberIdx}")
+    public ResponseEntity<MapResponse> postPrivateMap(@PathVariable long memberIdx){
+
+        MapResponse result = mapService.createPrivateMap(memberIdx);
+
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
 
     //지도에 멤버 초대
     @PostMapping("/{mapIdx}/members")
-    public ResponseEntity<List<MapMemberResponse>> addMember(@PathVariable long mapIdx, @RequestBody List<AddedMemberDto> dto){
+    public ResponseEntity<List<MapMemberResponse>> addMember(@PathVariable long mapIdx, @RequestBody @Validated List<AddedMemberDto> dto){
 
         List<MapMemberResponse> result = mapService.addMembers(mapIdx, dto);
 
@@ -60,7 +70,7 @@ public class MapController {
 
     //지도에 새멤버 초대
     @PostMapping("/{mapIdx}/members")
-    public ResponseEntity<MapMemberResponse> addMember(@PathVariable long mapIdx, @RequestBody AddedMemberDto dto){
+    public ResponseEntity<MapMemberResponse> addMember(@PathVariable long mapIdx, @RequestBody @Validated AddedMemberDto dto){
 
         MapMemberResponse result = mapService.addNewMember(mapIdx, dto);
 
@@ -69,7 +79,7 @@ public class MapController {
 
     //지도 이름 바꾸기
     @PutMapping("/{mapIdx}/title")
-    public ResponseEntity<?> changeTitle(@PathVariable long mapIdx, @RequestBody MapDto dto){
+    public ResponseEntity<?> changeTitle(@PathVariable long mapIdx, @RequestBody @Validated MapDto dto){
 
         MapResponse result = mapService.changeMapTitle(mapIdx, dto);
 

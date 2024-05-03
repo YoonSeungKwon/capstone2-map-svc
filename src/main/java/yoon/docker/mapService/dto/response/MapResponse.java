@@ -13,8 +13,6 @@ public class MapResponse {
 
     private String title;
 
-    private String category;
-
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

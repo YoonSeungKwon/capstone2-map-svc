@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public GroupedOpenApi friendApiGroup(){
+    public GroupedOpenApi mapApiGroup(){
         return GroupedOpenApi.builder()
                 .group("MAP API")
                 .pathsToMatch("/api/v1/maps/**")
