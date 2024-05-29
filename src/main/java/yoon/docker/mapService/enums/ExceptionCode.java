@@ -1,5 +1,7 @@
 package yoon.docker.mapService.enums;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -8,13 +10,17 @@ public enum ExceptionCode {
 
     //유효성 검사
 
-    MEMBER_INDEX_BLANK("초대하려는 멤버의 인덱스가 비어있습니다.", HttpStatus.BAD_REQUEST),
+    MAP_INDEX_NULL("지도의 인덱스가 비어있습니다.", HttpStatus.BAD_REQUEST),
 
     MEMBER_INDEX_NULL("초대하려는 멤버의 인덱스가 비어있습니다.", HttpStatus.BAD_REQUEST),
 
     MAP_TITLE_BLANK("지도의 제목이 비어있습니다.", HttpStatus.BAD_REQUEST),
 
     MAP_TITLE_NULL("지도의 제목이 비어있습니다.", HttpStatus.BAD_REQUEST),
+
+    PRIVATE_MAP_DELETE("기본 지도는 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST),
+
+    PRIVATE_MAP_ADD("기본 지도에는 초대할 수 없습니다.", HttpStatus.BAD_REQUEST),
 
 
     //지도 예외

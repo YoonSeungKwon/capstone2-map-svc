@@ -10,8 +10,6 @@ import java.util.List;
 @Repository
 public interface MapRepository extends JpaRepository<Maps, Long> {
 
-    List<Maps> findAllByMapMembers_Members(Members members);
-
     Maps findMapsByMapIdx(long idx);
 
 }

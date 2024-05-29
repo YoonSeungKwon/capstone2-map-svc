@@ -7,8 +7,10 @@ import lombok.Getter;
 @Getter
 public class AddedMemberDto {
 
+    @NotNull(message = "MAP_INDEX_NULL")
+    private long mapIdx;
+
     @NotNull(message = "MEMBER_INDEX_NULL")
-    @NotBlank(message = "MEMBER_INDEX_BLANK")
-    private long idx;
+    private long memberIdx;
 
 }

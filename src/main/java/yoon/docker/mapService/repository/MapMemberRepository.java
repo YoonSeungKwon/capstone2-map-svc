@@ -13,10 +13,14 @@ import java.util.List;
 @Repository
 public interface MapMemberRepository extends JpaRepository<MapMembers, Long> {
 
+    boolean existsByMaps(Maps maps);
     List<MapMembers> findAllByMaps(Maps maps);
+
+    List<MapMembers> findAllByMembers(Members members);
+
     MapMembers findMapMembersByMapsAndMembers(Maps maps, Members members);
 
-    boolean existsByMaps(Maps maps);
+    List<MapMembers> findMapMembersByMembersAndMaps_Private(Members members, boolean isPrivate);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     boolean existsByMapsAndMembers(Maps maps, Members members);

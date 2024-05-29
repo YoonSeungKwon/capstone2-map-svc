@@ -25,7 +25,8 @@ public class GlobalExceptionHandler {
         String exception = bindingResult.getAllErrors().get(0).getDefaultMessage();
 
         ExceptionCode code = switch (Objects.requireNonNull(exception)) {
-            case "MEMBER_INDEX_BLANK" -> ExceptionCode.MEMBER_INDEX_BLANK;
+
+            case "MAP_INDEX_NULL" -> ExceptionCode.MAP_INDEX_NULL;
 
             case "MEMBER_INDEX_NULL" -> ExceptionCode.MEMBER_INDEX_NULL;
 
