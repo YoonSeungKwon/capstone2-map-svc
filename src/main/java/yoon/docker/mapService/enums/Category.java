@@ -5,17 +5,33 @@ import lombok.Getter;
 @Getter
 public enum Category {
 
-    숙소("숙소", 1),
-    교통("교통", 2),
-    식비("식비", 3),
-    오락("오락", 4);
+    MEAL("식사"),
 
-    private final String name;
-    private final int index;
+    CAFE("카페"),
 
-    Category(String name, int index){
-        this.index = index;
-        this.name = name;
+    BEVERAGE("주류"),
+
+    PICTURE("사진"),
+
+    SHOPPING("쇼핑"),
+
+    PRESENT("선물"),
+
+    OTHERS("기타");
+
+    private final String category;
+
+    Category(String category){
+        this.category = category;
+    }
+
+    public static Category fromString(String category) {
+        for (Category c : Category.values()) {
+            if (c.category.equalsIgnoreCase(category)) {
+                return c;
+            }
+        }
+        return OTHERS;
     }
 
 }

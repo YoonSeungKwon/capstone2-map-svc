@@ -18,6 +18,8 @@ import yoon.docker.mapService.dto.response.MemberResponse;
 import yoon.docker.mapService.entity.MapMembers;
 import yoon.docker.mapService.entity.Maps;
 import yoon.docker.mapService.entity.Members;
+import yoon.docker.mapService.entity.Pin;
+import yoon.docker.mapService.enums.Colors;
 import yoon.docker.mapService.enums.ExceptionCode;
 import yoon.docker.mapService.exception.MapException;
 import yoon.docker.mapService.exception.PessimisticLockTimeOutException;
@@ -43,8 +45,15 @@ public class MapService {
 
 
 
-    private MapResponse toResponse(Maps maps){return new MapResponse(maps.getMapIdx(), maps.getTitle(),
-             maps.getCreatedAt(), maps.getUpdatedAt());}
+    private MapResponse toResponse(Maps maps){
+
+        List<Integer> expense = new ArrayList<>();
+
+        for(Pin p: maps.getPins())
+            expense.add(p.getCost());
+
+        return new MapResponse(maps.getMapIdx(), maps.getTitle(), maps.getColors().getColor(),
+            maps.getLatitude(), maps.getLongitude(), expense,  maps.getSelectedDate(), maps.getCreatedAt(), maps.getUpdatedAt());}
     private MemberResponse toResponse(Members members){return new MemberResponse(members.getMemberIdx(),
             members.getEmail(), members.getUsername(), members.getProfile(), members.getCreatedAt(), members.getUpdatedAt());}
     private MapMemberResponse toResponse(MapMembers mapMembers){return new MapMemberResponse(mapMembers.getMapMembersIdx(),
@@ -130,15 +139,23 @@ public class MapService {
             throw new UnAuthorizedException(ExceptionCode.UNAUTHORIZED_ACCESS.getMessage(), ExceptionCode.UNAUTHORIZED_ACCESS.getStatus()); //로그인 되지 않았거나 만료됨
 
         Members currentMember = (Members) authentication.getPrincipal();
+
         Maps newMap = Maps.builder()
                 .title(dto.getTitle())
+                .colors(Colors.valueOf(dto.getColor()))
+                .lat(dto.getLat())
+                .lon(dto.getLon())
+                .isPrivate(false)
+                .selectedDate(dto.getSelectedDate())
                 .build();
+
         MapMembers mapMembers = MapMembers.builder()
                 .members(currentMember)
                 .maps(newMap)
                 .build();
 
         mapMemberRepository.save(mapMembers);
+
         return toResponse(mapRepository.save(newMap));
     }
 
@@ -154,16 +171,18 @@ public class MapService {
 
         Maps newMap = Maps.builder()
                 .title(dto.getTitle())
+                .colors(Colors.valueOf(dto.getColor()))
+                .lat(dto.getLat())
+                .lon(dto.getLon())
+                .isPrivate(true)
+                .selectedDate(dto.getSelectedDate())
                 .build();
-        newMap.setPrivate(true);
-
-        mapRepository.save(newMap);
 
         MapMembers mapMembers = MapMembers.builder().members(currentMember).maps(newMap).build();
 
         mapMemberRepository.save(mapMembers);
 
-        return toResponse(newMap);
+        return toResponse(mapRepository.save(newMap));
     }
 
 

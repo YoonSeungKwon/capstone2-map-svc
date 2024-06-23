@@ -26,8 +26,8 @@ public class MapController {
 
 
     //지도 불러오기
-    @Operation(summary = "지도 불러오기", description = "가입 되어있는 지도들을 리스트로 불러온다.")
-    @GetMapping()
+    @Operation(summary = "마이맵 불러오기", description = "가입 되어있는 지도들을 리스트로 불러온다.")
+    @GetMapping("/private")
     public ResponseEntity<List<MapResponse>> getPrivateMap(){
 
         List<MapResponse> result = mapService.getPrivateMapList();
@@ -35,8 +35,8 @@ public class MapController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @Operation(summary = "지도 불러오기", description = "가입 되어있는 지도들을 리스트로 불러온다.")
-    @GetMapping()
+    @Operation(summary = "공유맵 불러오기", description = "가입 되어있는 지도들을 리스트로 불러온다.")
+    @GetMapping("/shared")
     public ResponseEntity<List<MapResponse>> getSharedMap(){
 
         List<MapResponse> result = mapService.getSharedMapList();
@@ -55,9 +55,9 @@ public class MapController {
     }
 
     //지도 만들기
-    @Operation(summary = "새로운 지도 만들기", description = "새로운 지도 만들기")
-    @PostMapping()
-    public ResponseEntity<MapResponse> postMap(@RequestBody @Validated MapDto dto){
+    @Operation(summary = "공유맵 만들기", description = "새로운 지도 만들기")
+    @PostMapping("/shared")
+    public ResponseEntity<MapResponse> postSharedMap(@RequestBody @Validated MapDto dto){
 
         MapResponse result = mapService.createNewMap(dto);
 
@@ -65,7 +65,7 @@ public class MapController {
     }
 
     //개인 지도 만들기(유저당 하나 회원가입시 생성)
-    @Operation(summary = "개인 지도 만들기", description = "회원가입시 주어지는 홈화면의 멤버 개인 지도 만들기")
+    @Operation(summary = "마이맵 만들기", description = "회원가입시 주어지는 홈화면의 멤버 개인 지도 만들기")
     @PostMapping("/private")
     public ResponseEntity<MapResponse> postPrivateMap(@RequestBody @Validated MapDto dto){
 
