@@ -8,7 +8,8 @@ public enum Method {
     CREDIT_CARD("신용카드"),
     DEBIT_CARD("체크카드"),
     BANK_TRANSFER("계좌이체"),
-    CASH("현금");
+    CASH("현금"),
+    ETC("기타");
 
     private final String value;
 
@@ -22,6 +23,7 @@ public enum Method {
                 return m;
             }
         }
-        return CASH;
+        return ETC;
     }
 }
+

@@ -59,7 +59,7 @@ public class MapController {
     @PostMapping("/shared")
     public ResponseEntity<MapResponse> postSharedMap(@RequestBody @Validated MapDto dto){
 
-        MapResponse result = mapService.createNewMap(dto);
+        MapResponse result = mapService.createSharedMap(dto);
 
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }

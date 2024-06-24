@@ -52,7 +52,7 @@ public class MapService {
         for(Pin p: maps.getPins())
             expense.add(p.getCost());
 
-        return new MapResponse(maps.getMapIdx(), maps.getTitle(), maps.getColors().getColor(),
+        return new MapResponse(maps.getMapIdx(), maps.getOwnerIdx(), maps.getTitle(), maps.getColors().getColor(),
             maps.getLatitude(), maps.getLongitude(), expense,  maps.getSelectedDate(), maps.getCreatedAt(), maps.getUpdatedAt());}
     private MemberResponse toResponse(Members members){return new MemberResponse(members.getMemberIdx(),
             members.getEmail(), members.getUsername(), members.getProfile(), members.getCreatedAt(), members.getUpdatedAt());}
@@ -132,7 +132,7 @@ public class MapService {
 
     //지도 만들기
     @Transactional
-    public MapResponse createNewMap(MapDto dto){
+    public MapResponse createSharedMap(MapDto dto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken)
@@ -141,6 +141,7 @@ public class MapService {
         Members currentMember = (Members) authentication.getPrincipal();
 
         Maps newMap = Maps.builder()
+                .ownerIdx(currentMember.getMemberIdx())
                 .title(dto.getTitle())
                 .colors(Colors.valueOf(dto.getColor()))
                 .lat(dto.getLat())
@@ -170,6 +171,7 @@ public class MapService {
         Members currentMember = (Members) authentication.getPrincipal();
 
         Maps newMap = Maps.builder()
+                .ownerIdx(currentMember.getMemberIdx())
                 .title(dto.getTitle())
                 .colors(Colors.valueOf(dto.getColor()))
                 .lat(dto.getLat())
@@ -259,7 +261,7 @@ public class MapService {
         Maps currentMap = mapRepository.findMapsByMapIdx(mapIdx);
         if(currentMap == null)//해당 지도가 존재하지 않음
             throw new MapException(ExceptionCode.MAP_NOT_FOUND.getMessage(), ExceptionCode.MAP_NOT_FOUND.getStatus());
-        if(!mapMemberRepository.existsByMapsAndMembers(currentMap, currentMember))//지도에 권한이 없음 (회원이 아님)
+        if(!mapMemberRepository.existsByMapsAndMembers(currentMap, currentMember) || currentMember.getMemberIdx()!=currentMap.getOwnerIdx())//지도에 권한이 없음 (회원이 아님)
             throw new MapException(ExceptionCode.NOT_MAP_USER.getMessage(),
                     ExceptionCode.NOT_MAP_USER.getStatus());
 

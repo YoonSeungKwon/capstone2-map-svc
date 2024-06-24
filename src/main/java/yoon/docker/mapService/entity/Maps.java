@@ -29,6 +29,9 @@ public class Maps {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "maps")
     private List<Pin> pins = new ArrayList<>();
 
+    @Column(nullable = false)
+    private long ownerIdx;
+
     @Column
     private String title;
 
@@ -53,7 +56,8 @@ public class Maps {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Maps(String title, Colors colors, double lat, double lon, boolean isPrivate, LocalDateTime selectedDate){
+    public Maps(long ownerIdx, String title, Colors colors, double lat, double lon, boolean isPrivate, LocalDateTime selectedDate){
+        this.ownerIdx = ownerIdx;
         this.title = title;
         this.colors = colors;
         this.latitude = lat;

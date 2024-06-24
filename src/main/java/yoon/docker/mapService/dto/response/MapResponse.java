@@ -12,6 +12,8 @@ public class MapResponse {
 
     private long idx;
 
+    private long ownerIdx;
+
     private String title;
 
     private String color;

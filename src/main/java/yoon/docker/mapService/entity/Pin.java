@@ -33,9 +33,15 @@ public class Pin {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "pin")
     private List<Comments> comments = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "pin")
+    private List<PinMembers> pinMembers = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pin_member")
     private Members members;
+
+    @Column(nullable = false, length = 250)
+    private String place;
 
     @Column(nullable = false, length = 250)
     private String header;
@@ -70,9 +76,10 @@ public class Pin {
 
 
     @Builder
-    public Pin(Maps maps, Members members, String header, String title, String memo, Category category, Method method, int cost, double lat, double lon, String file){
+    public Pin(Maps maps, Members members, String place, String header, String title, String memo, Category category, Method method, int cost, double lat, double lon, String file){
         this.maps = maps;
         this.members = members;
+        this.place = place;
         this.header = header;
         this.title = title;
         this.memo = memo;
